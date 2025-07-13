@@ -1,0 +1,286 @@
+openapi: 3.1.0
+info:
+  contact:
+    email: api@todo.com
+    name: Todo API Team
+  description: A simple Todo API built with Rust and Axum
+  license:
+    name: ''
+  title: Todo API
+  version: 1.0.0
+paths:
+  /tasks:
+    get:
+      operationId: get_tasks
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Task'
+                type: array
+          description: List of all tasks
+        '500':
+          description: Internal server error
+      summary: Get all tasks
+      tags:
+      - tasks
+    post:
+      operationId: create_task
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTask'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+          description: Task created successfully
+        '400':
+          description: Validation error
+        '500':
+          description: Internal server error
+      summary: Create a new task
+      tags:
+      - tasks
+  /tasks/completed:
+    get:
+      operationId: get_completed_tasks
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Task'
+                type: array
+          description: List of completed tasks
+        '500':
+          description: Internal server error
+      summary: Get all completed tasks
+      tags:
+      - tasks
+  /tasks/pending:
+    get:
+      operationId: get_pending_tasks
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Task'
+                type: array
+          description: List of pending tasks
+        '500':
+          description: Internal server error
+      summary: Get all pending tasks
+      tags:
+      - tasks
+  /tasks/search:
+    get:
+      operationId: search_tasks
+      parameters:
+      - description: Search query
+        in: query
+        name: q
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Task'
+                type: array
+          description: Search results
+        '500':
+          description: Internal server error
+      summary: Search tasks by description
+      tags:
+      - tasks
+  /tasks/{id}:
+    delete:
+      operationId: delete_task
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '204':
+          description: Task deleted successfully
+        '404':
+          description: Task not found
+        '500':
+          description: Internal server error
+      summary: Delete a task
+      tags:
+      - tasks
+    get:
+      operationId: get_task_by_id
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+          description: Task found
+        '404':
+          description: Task not found
+        '500':
+          description: Internal server error
+      summary: Get a task by ID
+      tags:
+      - tasks
+    put:
+      operationId: update_task
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: int64
+          minimum: 0
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTask'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+          description: Task updated successfully
+        '400':
+          description: Validation error or invalid operation
+        '404':
+          description: Task not found
+        '500':
+          description: Internal server error
+      summary: Update a task
+      tags:
+      - tasks
+  /tasks/{id}/complete:
+    put:
+      operationId: complete_task
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+          description: Task marked as completed
+        '404':
+          description: Task not found
+        '500':
+          description: Internal server error
+      summary: Mark a task as completed
+      tags:
+      - tasks
+  /tasks/{id}/uncomplete:
+    put:
+      operationId: uncomplete_task
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        schema:
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+          description: Task marked as uncompleted
+        '404':
+          description: Task not found
+        '500':
+          description: Internal server error
+      summary: Mark a task as uncompleted
+      tags:
+      - tasks
+components:
+  schemas:
+    CreateTask:
+      properties:
+        description:
+          type: string
+      required:
+      - description
+      type: object
+    Task:
+      properties:
+        completed:
+          type: boolean
+        created_at:
+          format: date-time
+          type: string
+        description:
+          type: string
+        id:
+          format: int64
+          minimum: 0
+          type: integer
+        updated_at:
+          format: date-time
+          type: string
+      required:
+      - id
+      - description
+      - completed
+      - created_at
+      - updated_at
+      type: object
+    UpdateTask:
+      properties:
+        completed:
+          type:
+          - boolean
+          - 'null'
+        description:
+          type:
+          - string
+          - 'null'
+      type: object
+tags:
+- description: Task management endpoints
+  name: tasks
