@@ -1,0 +1,19 @@
+name: Check Slim Runner Tools
+on:
+  workflow_dispatch: # 手動実行
+
+jobs:
+  check:
+    runs-on: ubuntu-slim
+    steps:
+      - name: Check for gh
+        run: |
+          echo "Checking for gh..."
+          which gh || echo "gh not found"
+          gh --version
+      
+      - name: Check for jq
+        run: |
+          echo "Checking for jq..."
+          which jq || echo "jq not found"
+          jq --version
